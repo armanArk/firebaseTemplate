@@ -1,0 +1,19 @@
+{
+  "type": "service_account",
+  "project_id": "smartgh-d4eb3",
+  "private_key_id": "85f7cfc5a1613ac371f7af6475eb1ab067512674",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGtLX0flILABVK\n23L4A/K614jU528Y0PrJRytnB0yVR2nO3eQmSLqObv3eN8UCmzJF9eeWws5B2OGO\n/vwhqkQI8FWSYkRBpvOidmtvjcJWeZLdI95H5Fsiv//Q+ZrWNklrkeVSYdhYePFH\n08QEJGN9U7kBsTQUePsjQlXGuHNiOtCLKsIuzaX7EA6SBR+n4BwLsbMto0cwtAKC\nEUuVIbspGxIsT85+BQ7CERpaxmcj42LvpCtNAnfchtk1Kk6zWN18U4VgpQB2x7W0\n3TLch4P9Bjl2Vpij6xovnbub/66Xf5jsntUz0udAB4gYplWMIlury9f3SXV1VFTZ\najI2tRAtAgMBAAECggEAARMoKs7mHbYd515BhHLtBLK2xEQON0mmGaGfa/q/oM0W\nlu5fVg+tpqiWCfYuRCHXx0YZvxiFqhiEu9PIRFxZ6tx18glDCkHfboEKert/Eh2t\nPDH9+VCUZ583QIehHUiE5CaRYX0zAOOClptgI4+Y1Cw4Q3iUagnvfdTVhvIneaAK\nYQBHbZdvaELAqNKp0Vje8laV7YaOBGjDqZNbJ2Z3wq7RrEMT+LQLMk9iYduIAYXI\nXbcgtAAPj68Eqbu+KRzlXQwtYwhqFvrWKcTwbHAFOKI+7ipmd5mjMKbQgA0rnNXU\nHXQuHSA8SR43qMZkif2snjfyCJ8yyK0e07FCpo938QKBgQDlm56Y2PJNRo7r857E\nWqLN4J16OzeaCmK08tEYTUa0HOOjN87+edNJFdEXV9HLHfh2DweOh+8AOS5anfQ4\nxSB5RjrRmvOclrbSjgBsU2z9Tr2Nq0EUudxAS3/v6P+eI0ZYKWxItC6ehaUIqoVQ\nNlJZM/cp9hg15g1UatYJ6z+LFQKBgQDdi8cRPK42n3JjjqP/lPTg+TpNzwxSi+/D\nBge1FNtFw/HZxhrSVzrfDa5cYfrYpPEk2E/DT+XtiDU4XGyvIRcwnmq2glDlNyMy\n30vYrZzCJXYerZk17CYcewqMm8S64DoC0LR8Y/KzWZ2DaFB0oR9d5Y0BXRkf4DoA\nNL6EIu7WuQKBgQC0YWNhNN52Mv5JA6UxIPtRvio5QphV3d7ZxQDblKn9Cc0UBt4J\nMW/5tLgFHKrmZW8yYHBRWx06EbIG4pxglQ0D+VZwIMlNtWF/XKucbpXrEpb72xRP\n0gvkPuwNcACRHak/zZsSKuuNAfU7L6t37pUXGyoLvxgaD9ddAGmSdUwAWQKBgBWs\nFcYm5HftcxgwHPTkkmvrlXuFFJSCoeq3DUv2hVi2yVLfYUJQTC8DvJnG7+3/fKN5\nEZxulXR+DY6849jh6M3VwWSnLNivYx8X3uiMWzhWx85KdyFiP3wrwSVuG3mYc7RQ\nzEca0+QdkR4It04hcNsTmI6Yl9uZaLMadcShUjHpAoGAVpwFo8tf+gXyEnFARHTu\nUnDPcdpblwSnZs15qA35ZW6t3c6PI0KDuz3p7JCaU46JyyFfEBb9WkPxqxGRkWbc\n7c0m4BBjq9xiqwfmtP9gApz/JEfNU5D+O1K0WkRKWaucG7ibxUg6gjRuKGhJMG6M\nsqvOZYC+Nk3ySZEjkwO90Tk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-i97zu@smartgh-d4eb3.iam.gserviceaccount.com",
+  "client_id": "108185644872446489901",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-i97zu%40smartgh-d4eb3.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+{
+"DB_URL":"https://smartgh-d4eb3-default-rtdb.firebaseio.com/"
+"API_KEY":"AIzaSyBO1K3d9l6CHoiAIiBrVGbCwPuwbOR9xoI"
+"EMAIL":"arkansashalim@gmail.com"
+"PASS":"agro981126"
+}
