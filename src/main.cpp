@@ -13,6 +13,8 @@
  * The complete usage guidelines, please visit https://github.com/mobizt/FirebaseClient
  */
 #include <Arduino.h>
+#define DEBUG 1
+#include "debug.h"
 #include <ArduinoJson.h>
 #include <async_handler.h>
 #include <RTClib.h>
@@ -941,7 +943,7 @@ void saveWIFI(String ssid, String pass)
 
 void printError(int code, const String &msg)
 {
-  Firebase.printf("Error, msg: %s, code: %d\n", msg.c_str(), code);
+  Serial.printf("Error, msg: %s, code: %d\n", msg.c_str(), code);
 }
 void setup()
 {
@@ -959,7 +961,7 @@ void setup()
   Serial.println(WiFi.localIP());
   Serial.println();
 
-  Firebase.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
+  Serial.printf("Firebase Client v%s\n", FIREBASE_CLIENT_VERSION);
 
   Serial.println("Initializing app...");
 
@@ -1231,17 +1233,17 @@ void printResult(AsyncResult &aResult)
 {
   if (aResult.isEvent())
   {
-    Firebase.printf("Event task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.appEvent().message().c_str(), aResult.appEvent().code());
+    Serial.printf("Event task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.appEvent().message().c_str(), aResult.appEvent().code());
   }
 
-  if (aResult.isDebug())
-  {
-    Firebase.printf("Debug task: %s, msg: %s\n", aResult.uid().c_str(), aResult.debug().c_str());
-  }
+  // if (aResult.isDebug())
+  // {
+  //   Serial.printf("Debug task: %s, msg: %s\n", aResult.uid().c_str(), aResult.debug().c_str());
+  // }
 
   if (aResult.isError())
   {
-    Firebase.printf("Error task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.error().message().c_str(), aResult.error().code());
+    Serial.printf("Error task: %s, msg: %s, code: %d\n", aResult.uid().c_str(), aResult.error().message().c_str(), aResult.error().code());
   }
 
   if (aResult.available())
@@ -1250,11 +1252,11 @@ void printResult(AsyncResult &aResult)
     if (RTDB.isStream())
     {
       Serial.println("----------------------------");
-      Firebase.printf("task: %s\n", aResult.uid().c_str());
-      Firebase.printf("event: %s\n", RTDB.event().c_str());
-      Firebase.printf("path: %s\n", RTDB.dataPath().c_str());
-      Firebase.printf("data: %s\n", RTDB.to<const char *>());
-      Firebase.printf("type: %d\n", RTDB.type());
+      Serial.printf("task: %s\n", aResult.uid().c_str());
+      Serial.printf("event: %s\n", RTDB.event().c_str());
+      Serial.printf("path: %s\n", RTDB.dataPath().c_str());
+      Serial.printf("data: %s\n", RTDB.to<const char *>());
+      Serial.printf("type: %d\n", RTDB.type());
       firebaseRcvPath = String(RTDB.dataPath());
       firebaseRcvData = String(RTDB.to<const char *>());
       firebaseRcvEvent = String(RTDB.event());
@@ -1270,7 +1272,7 @@ void printResult(AsyncResult &aResult)
     else
     {
       Serial.println("----------------------------");
-      Firebase.printf("task: %s, payload: %s\n", aResult.uid().c_str(), aResult.c_str());
+      Serial.printf("task: %s, payload: %s\n", aResult.uid().c_str(), aResult.c_str());
     }
   }
 }
