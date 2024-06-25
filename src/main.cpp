@@ -775,176 +775,12 @@ RealtimeDatabase Database;
 AsyncResult result1, result2;
 LegacyToken dbSecret(DATABASE_SECRET);
 String reverseString(String str);
-#include <WebServer.h>
-WebServer server(80);
-// Function to return HTML based on WiFi connection status
-String getHtml(byte status)
-{
-  String html = R"rawliteral(
-<!DOCTYPE HTML>
-<html>
-<head>
-  <title>ESP WiFi Manager</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background-color: #ffffff;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      max-width: 400px;
-    }
-    .footer {
-      margin-top: 20px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .save-success {
-      color: green;
-    }
-    .save-failed {
-      color: red;
-    }
-    .title {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 15px;
-    }
-    .input-label {
-      text-align: left;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .input-field {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    .submit-button {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .submit-button:hover {
-      background-color: #2375b3;
-    }
-  </style>
-  <meta charset="UTF-8">
-</head>
-<body>
-  <div class="container">
-    <div class="title">WiFi Configuration</div>
-    <form action="/get">
-      <div class="input-group">
-        <label class="input-label" for="WIFI_SSID">WiFi SSID</label>
-        <input id="WIFI_SSID" class="input-field" required type="text" name="input1" value="" maxlength="32">
-      </div>
-      <div class="input-group">
-        <label class="input-label" for="WIFI_PASS">WiFi Password</label>
-        <input id="WIFI_PASS" class="input-field" required type="password" name="input2" value="" maxlength="32">
-      </div>
-      <button class="submit-button" type="submit">Connect</button>
-    </form>
-)rawliteral";
-  if (status == 0)
-  {
-    html += R"rawliteral(
-        <div class="footer"> powered by agroX</div>
-    </div>
-  </body>
-</html>
-)rawliteral";
-  }
-  else if (status == 1)
-  {
-    html += R"rawliteral(
-        <div class="footer save-success">save success</div>
-        <div class="footer"> powered by agroX</div>
-    </div>
-  </body>
-</html>
-)rawliteral";
-  }
-  else
-  {
-    html += R"rawliteral(
-        <div class="footer save-failed">save failed</div>
-        <div class="footer"> Created by agroX</div>
-    </div>
-  </body>
-</html>
-)rawliteral";
-  }
-  return html;
-}
-
-void handleWifi()
-{
-  byte status = 0; // Assume initial status as 0 for demonstration
-  server.send(200, "text/html", getHtml(status));
-}
-void handleRoot()
-{
-  server.send(200, "text/plain", "Hello, world!");
-}
-
-// Function to handle the form submission ("/get")
-void handleFormSubmit()
-{
-  String input1Value = server.arg("input1");
-  String input2Value = server.arg("input2");
-  Serial.println("SSID: " + input1Value);
-  Serial.println("Password: " + input2Value);
-  byte status = 1;
-  String response = getHtml(status);
-  server.send(200, "text/html", response);
-}
-
-// Function to save WiFi credentials
-void saveWIFI(String ssid, String pass)
-{
-  String response;
-  if (ssid.length() < 3 || pass.length() < 8)
-  {
-    response = getHtml(2);
-    server.send(200, "text/html", response);
-    // nexWriteString(stringify[NEX_WIFI_INFO], "failed");
-    return;
-  }
-  // preferences.putString(stringify[PREF_PARAM_WIFI_SSID], ssid);
-  // preferences.putString(stringify[PREF_PARAM_WIFI_PASS], pass);
-  Serial.println("save:" + ssid + ": " + pass);
-  String info = "saved ssid:" + ssid;
-  response = getHtml(1);
-  server.send(200, "text/html", response);
-  // nexWriteString(stringify[NEX_WIFI_INFO], info);
-  Serial.println(info);
-  ESP.restart();
-}
 
 void printError(int code, const String &msg)
 {
   Serial.printf("Error, msg: %s, code: %d\n", msg.c_str(), code);
 }
+
 void setup()
 {
   Serial.begin(115200);
@@ -985,10 +821,6 @@ void setup()
   Serial.println("Connected to WiFi");
   Serial.println(WiFi.localIP());
 
-  // Define the root URL ("/")
-  server.on("/", handleRoot);
-  server.on("/wifi", handleWifi);
-  server.on("/get", HTTP_GET, handleFormSubmit);
   server.begin();
 }
 void firebaseUpdateFert();
@@ -1001,8 +833,6 @@ void loop()
   // JWT is a static object of JWTClass and it's not thread safe.
   // In multi-threaded operations (multi-FirebaseApp), you have to define JWTClass for each FirebaseApp,
   // and set it to the FirebaseApp via FirebaseApp::setJWTProcessor(<JWTClass>), before calling initializeApp.
-
-  server.handleClient();
 
   pushFBAsync.call();
 
@@ -1032,28 +862,6 @@ String firebaseWithPath(String path, String child)
 {
   return path + "/" + child;
 }
-void firebaseUpdateClimate()
-{
-  JsonWriter writer;
-  object_t objData, json, obj1, obj2, obj3, objSend;
-  // writer.create(obj1, stringify[SET_PARAM_STATE_COOLING_PAD], getStateFromBool(varClimateCoolingPad));
-  // writer.create(obj2, stringify[SET_PARAM_STATE_BLOWER], getStateFromBool(varClimateStateBlower));
-  // writer.create(obj3, stringify[SET_PARAM_STATE_MISTING], getStateFromBool(varClimateStateMisting));
-  // writer.join(objData, 3, obj1, obj2, obj3);
-  // Database.update<object_t>(aClient, firebaseWithPath(firebasePathSensorStatus, ""), objData, aResult_no_callback);
-
-  writer.create(obj1, stringify[SET_PARAM_STATE_COOLING_PAD], String(random(0, 10)));
-  writer.create(obj2, stringify[SET_PARAM_STATE_BLOWER], String(random(0, 10)));
-  writer.create(obj3, stringify[SET_PARAM_STATE_MISTING], String(random(0, 10)));
-  writer.join(objData, 3, obj1, obj2, obj3);
-  Database.update(aClient, "test/json_climate", objData, aResult_no_callback);
-}
-void firebaseResponsePayload()
-{
-  // Database.update<String>(aClient, firebaseWithSetParamPath(stringify[SET_PARAM_COMMAND_RESPONSE]), respPayloadFirebase, aResult_no_callback);
-  // Database.update<String>(aClient, firebaseWithSetParamPath(stringify[SET_PARAM_COMMAND]), "", aResult_no_callback);
-  // respPayloadFirebase = "";
-}
 void setPushReport(JsonWriter &_writer, object_t &json, const char *sensorName, float sensorValue, const char *format)
 {
   object_t _objSensorName, _objValue;
@@ -1066,71 +874,9 @@ void setPushReport(JsonWriter &_writer, object_t &json, const char *sensorName, 
 }
 void pushFB()
 {
-  firebaseUpdateFert();
-  firebaseUpdateSensor();
-  firebaseUpdateClimate();
-}
-void sendReport()
-{
-  JsonWriter writer;
-  object_t objData, json, obj1, obj2, obj3, obj4, obj5, objCreatedAt, objSend;
-  setPushReport(writer, obj1, "nitrogen", 14, "%d");
-  setPushReport(writer, obj2, "phosphorus", 44, "%d");
-  setPushReport(writer, obj3, "ph_water", 7.7, "%.1f");
-  setPushReport(writer, obj4, "temp_water", -127.0, "%.1f");
-  json.initArray();
-  writer.join(json, 2, obj1, obj2);
-  writer.create(objData, "data", json);
-  writer.create(objCreatedAt, "created_at", "2024-05-24T04:04:46");
-
-  // Join data and created_at
-  writer.join(objSend, 2, objData, objCreatedAt);
-
-  // Print and push to Firebase
-  Serial.println("pushFB:");
-  Serial.println(objSend.c_str());
-  Database.push<object_t>(aClient, "/test/json", objSend, aResult_no_callback);
-}
-void firebaseUpdateFert()
-{
-  JsonWriter writer;
-  object_t json, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, objSend;
-  writer.create(obj1, stringify[SET_PARAM_STATE_ABMIX], string_t(random(1, 3)));
-  writer.create(obj2, stringify[SET_PARAM_STATE_PH_UP], string_t(random(1, 3)));
-  writer.create(obj3, stringify[SET_PARAM_STATE_PH_DOWN], string_t(random(1, 3)));
-  writer.create(obj4, stringify[SET_PARAM_STATE_DRAIN], string_t(random(1, 3)));
-  writer.create(obj5, stringify[SET_PARAM_STATE_DRIP], string_t(random(1, 3)));
-  writer.create(obj6, stringify[SET_PARAM_STATE_FLUSH], string_t(random(1, 3)));
-  writer.create(obj7, stringify[SET_PARAM_STATE_TANK_FILL], string_t(random(1, 3)));
-  writer.create(obj8, stringify[SET_PARAM_STATE_TANK_ABMIX], string_t(random(1, 3)));
-  writer.create(obj9, stringify[SET_PARAM_STATE_BACKWASH], string_t(random(1, 3)));
-  json.initArray();
-  writer.join(objSend, 9, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9);
-  Database.update<object_t>(aClient, firebaseWithPath(firebasePathSetParameter, ""), objSend, aResult_no_callback);
-}
-void firebaseUpdateSensor()
-{
-  char valueBuffer[20];
-  JsonWriter writer;
-  object_t objData, json, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16;
-  setSensorData(obj1, "water_ph", "ph", "ph water", dtostrf(4.4, 4, 2, valueBuffer));
-  setSensorData(obj2, "water_tds", "ppm", "tds water", itoa(static_cast<int>(random(2, 22)), valueBuffer, 10));
-  setSensorData(obj3, "soil_n", "mg/kg", "nitrogen", itoa(static_cast<int>(23), valueBuffer, 10));
-  setSensorData(obj4, "soil_p", "mg/kg", "phosphorus", itoa(static_cast<int>(43), valueBuffer, 10));
-  setSensorData(obj5, "soil_k", "mg/kg", "potassium", itoa(static_cast<int>(65), valueBuffer, 10));
-  setSensorData(obj6, "soil_ec", "uS/cm", "Soil EC", itoa(static_cast<int>(65), valueBuffer, 10));
-  setSensorData(obj7, "soil_hum", "Rh", "Humidity", dtostrf(4.4, 4, 1, valueBuffer));
-  setSensorData(obj8, "last_update", "ISO8601", "last update", "2024/22/12");
-  setSensorData(obj9, "clim_temp1", "°C", "temperature 1", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj10, "clim_hum1", "%", "humidity 1", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj11, "clim_temp2", "°C", "temperature 2", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj12, "clim_hum2", "%", "humidity 2", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj13, "clim_temp3", "°C", "temperature 3", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj14, "clim_hum3", "%", "humidity 3", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj15, "clim_temp_avg", "°C", "temperature avg", dtostrf(5.3, 4, 1, valueBuffer));
-  setSensorData(obj16, "clim_hum_avg", "%", "humidity avg", dtostrf(5.3, 4, 1, valueBuffer));
-  writer.join(objData, 16, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16);
-  Database.update<object_t>(aClient, firebaseWithPath(firebasePathSensorStatus, ""), objData, aResult_no_callback);
+  // firebaseUpdateFert();
+  // firebaseUpdateSensor();
+  // firebaseUpdateClimate();
 }
 void getMsg(Messages::Message &msg)
 {
@@ -1172,62 +918,6 @@ void timeStatusCB(uint32_t &ts)
 #elif __has_include(<WiFiNINA.h>) || __has_include(<WiFi101.h>)
   ts = WiFi.getTime();
 #endif
-}
-void firebaseProccessPath(String path, String data)
-{
-  if (path.indexOf(stringify[SET_PARAM_SCH_PPM]) > -1)
-  {
-    Serial.println("Stream received in path: SET_PARAM_SCH_PPM");
-    // preferences.putString(stringify[PREF_PARAM_SCHEDULE_PPM], firebaseRcvData);
-    // JsonPreprocessorSchedulePpm(firebaseRcvData);
-  }
-  else if (path.indexOf(stringify[SET_PARAM_SCH_DRIP]) > -1)
-  {
-    Serial.println("Stream received in path: SET_PARAM_SCH_DRIP");
-
-    // preferences.putString(stringify[PREF_PARAM_JADWAL_DRIP], firebaseRcvData);
-    // fertDripJsonProccess(firebaseRcvData);
-  }
-  else if (path.indexOf(stringify[SET_PARAM_COMMAND]) > -1)
-  {
-    Serial.println("Stream received in path: SET_PARAM_COMMAND");
-    // firebaseCommandResponse();
-  }
-  else
-  {
-    Serial.print("firebaseProccess Path:");
-    Serial.println(path);
-    Serial.print("  <> data:");
-    Serial.println(data);
-    // firebaseToPref(firebaseRcvPath, firebaseRcvData);
-  }
-}
-void firebaseStreamProcess()
-{
-  if (firebaseRcvEvent != "put")
-    return;
-  if (firebaseRcvPath == "/")
-  {
-    Serial.println("Stream received path isEmpty:" + firebaseRcvPath + "  value:" + firebaseRcvData);
-    StaticJsonDocument<5000> doc;
-    DeserializationError error = deserializeJson(doc, firebaseRcvData.c_str());
-    if (error)
-    {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-    for (JsonPair kv : doc.as<JsonObject>())
-    {
-      firebaseProccessPath(kv.key().c_str(), kv.value().as<const char *>());
-    }
-  }
-  else
-  {
-    firebaseProccessPath(firebaseRcvPath, firebaseRcvData);
-  }
-  // varFirebaseLastStreamReceivedEpoch = globalEpoch;
-  // asyncUpdateSensor.addInterval(5 * MS_TO_SECOND);
 }
 void printResult(AsyncResult &aResult)
 {

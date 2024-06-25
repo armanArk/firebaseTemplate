@@ -1,23 +1,7 @@
-#ifdef DEBUG
-inline void xDebug(const char *message)
-{
-    Serial.print(message);
-}
-
-inline void xDebugln(const char *message)
-{
-    Serial.println(message);
-}
+#if DEBUG == 1
+#define xDebug(x) Serial.print(x)
+#define xDebugln(x) Serial.println(x)
 #else
-inline void xDebug(const char *message)
-{
-    // Do nothing in release mode
-    (void)message; // Suppress unused parameter warning
-}
-
-inline void xDebugln(const char *message)
-{
-    // Do nothing in release mode
-    (void)message; // Suppress unused parameter warning
-}
+#define xDebug(x)
+#define xDebugln(x)
 #endif
