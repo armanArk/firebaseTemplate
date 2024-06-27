@@ -775,12 +775,11 @@ RealtimeDatabase Database;
 AsyncResult result1, result2;
 LegacyToken dbSecret(DATABASE_SECRET);
 String reverseString(String str);
-
+void firebasePushReport();
 void printError(int code, const String &msg)
 {
   Serial.printf("Error, msg: %s, code: %d\n", msg.c_str(), code);
 }
-
 void setup()
 {
   Serial.begin(115200);
@@ -814,14 +813,10 @@ void setup()
 
   // // Set your database URL
   Database.url(DATABASE_URL);
-  String firebasePathSetParameter = "/smart_farm/SLzDtb0A2fZh3UK/data/data_device_1/set_parameter/";
-
   Database.get(client1, firebasePathSetParameter.c_str(), result1, true /* this option is for Stream connection */);
 
   Serial.println("Connected to WiFi");
   Serial.println(WiFi.localIP());
-
-  server.begin();
 }
 void firebaseUpdateFert();
 void loop()
@@ -877,6 +872,7 @@ void pushFB()
   // firebaseUpdateFert();
   // firebaseUpdateSensor();
   // firebaseUpdateClimate();
+  firebasePushReport();
 }
 void getMsg(Messages::Message &msg)
 {
@@ -956,7 +952,7 @@ void printResult(AsyncResult &aResult)
       Serial.println("=============");
       if (firebaseRcvEvent == "put")
       {
-        firebaseStreamProcess();
+        // firebaseStreamProcess();
       }
     }
     else
@@ -992,4 +988,33 @@ String reverseString(String str)
   }
 
   return String(charArray);
+}
+void firebasePushReport()
+{
+  // xdebugln("firebasePushReport");
+  JsonWriter writer;
+  object_t objData, json, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16, objCreatedAt, objSend;
+  setPushReport(writer, obj1, "tds_water", 10.1, "%.1f");
+  setPushReport(writer, obj2, "nitrogen", 22, "%d");
+  setPushReport(writer, obj3, "phosphorus", 20, "%d");
+  setPushReport(writer, obj4, "potassium", 15, "%d");
+  // setPushReport(writer, obj5, "soil_ec", sensSoilEC, "%d");
+  // setPushReport(writer, obj6, "humidity", sensSoilHum, "%.1f");
+  // setPushReport(writer, obj7, "temperature_1", sensClimTemp1, "%.1f");
+  // setPushReport(writer, obj8, "humidity_1", sensClimHum1, "%.1f");
+  // setPushReport(writer, obj13, "temperature_avg", sensClimTempAvg, "%.1f");
+  // setPushReport(writer, obj14, "humidity_avg", sensClimHumAvg, "%.1f");
+  // setPushReport(writer, obj15, "temp_water", sensTempWater, "%.1f");
+  // setPushReport(writer, obj16, "ph_water", sensPh, "%.1f");
+  // setPushReport(json, 9, "temperature_2", sensClimTemp2, "%.1f");
+  // setPushReport(json, 10, "humidity_2", sensClimHum2, "%.1f");
+  // setPushReport(json, 11, "temperature_3", sensClimTemp3, "%.1f");
+  // setPushReport(json, 12, "humidity_3", sensClimHum3, "%.1f");
+  json.initArray();
+  writer.join(json, 16, obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16);
+  writer.create(objData, "data", json);
+  writer.create(objCreatedAt, "created_at", "mamamam");
+  writer.join(objSend, 2, objData, objCreatedAt);
+  Database.push<object_t>(aClient, "test/json", objSend, aResult_no_callback);
+  // firebaseDbPush<object_t, object_t>(firebaseWithPath(firebasePathReport, ""), objSend);
 }
